@@ -2,3 +2,4 @@ This is a test file
 with some content
 API_KEY=sk-abc123def456ghi789
 more content here
+NEW_SECRET=ghp_abcdef123456789012345678901234567890
