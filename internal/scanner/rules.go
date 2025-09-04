@@ -31,13 +31,22 @@ type Finding struct {
 
 // SecretScanner handles secret detection using regex rules
 type SecretScanner struct {
-	rules []SecretRule
+	rules         []SecretRule
+	ignoreChecker *IgnoreChecker
 }
 
 // NewSecretScanner creates a new SecretScanner with default rules
 func NewSecretScanner() *SecretScanner {
-	scanner := &SecretScanner{}
+	scanner := &SecretScanner{
+		ignoreChecker: NewIgnoreChecker(),
+	}
 	scanner.loadDefaultRules()
+	
+	// Try to load .secretignore file
+	if err := scanner.ignoreChecker.LoadIgnoreFile(".secretignore"); err != nil {
+		// Non-fatal error, just continue without ignore patterns
+	}
+	
 	return scanner
 }
 
@@ -188,11 +197,21 @@ func (s *SecretScanner) ScanLines(lines []DiffLine) []Finding {
 	var allFindings []Finding
 	
 	for _, line := range lines {
+		// Skip ignored files
+		if s.ignoreChecker.ShouldIgnore(line.FilePath) {
+			continue
+		}
+		
 		findings := s.ScanLine(line.FilePath, line.LineNum, line.Content)
 		allFindings = append(allFindings, findings...)
 	}
 	
 	return allFindings
+}
+
+// GetIgnoreChecker returns the ignore checker for external use
+func (s *SecretScanner) GetIgnoreChecker() *IgnoreChecker {
+	return s.ignoreChecker
 }
 
 // MaskSecret returns a masked version of the secret for safe display

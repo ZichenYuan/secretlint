@@ -41,6 +41,20 @@ func scanStagedChanges() error {
 	// Initialize the secret scanner
 	secretScanner := scanner.NewSecretScanner()
 	
+	// Show ignored files for debugging
+	ignoredFiles := make(map[string]int)
+	for _, line := range lines {
+		if secretScanner.GetIgnoreChecker().ShouldIgnore(line.FilePath) {
+			ignoredFiles[line.FilePath]++
+		}
+	}
+	if len(ignoredFiles) > 0 {
+		fmt.Printf("🚫 Ignored files:\n")
+		for filePath, lineCount := range ignoredFiles {
+			fmt.Printf("   %s (%d lines)\n", filePath, lineCount)
+		}
+	}
+	
 	// Scan all lines for secrets
 	findings := secretScanner.ScanLines(lines)
 	

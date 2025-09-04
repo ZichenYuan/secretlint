@@ -31,10 +31,6 @@ func Execute() error {
 	}
 }
 
-func runInit() error {
-	fmt.Println("🔧 Initializing secretlint...")
-	return fmt.Errorf("init command not implemented yet")
-}
 
 func runScan(args []string) error {
 	fmt.Println("🔍 Scanning for secrets...")

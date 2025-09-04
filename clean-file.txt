@@ -1,5 +1,0 @@
-This is a clean file
-with no secrets
-just regular content
-database_host=localhost
-port=5432
