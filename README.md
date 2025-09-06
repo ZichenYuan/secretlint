@@ -6,23 +6,26 @@ Secretlint is a lightweight, fast tool that automatically scans your Git commits
 
 ## 🚀 Quick Start
 
-### 1. Build Secretlint
+### 1. Install Secretlint Globally
 ```bash
-# Clone the repository
-git clone https://github.com/ZichenYuan/secretlint
-cd secretlint
+# Easy install using Go (recommended)
+go install github.com/ZichenYuan/secretlint/cmd/secretlint@latest
 
-# Build the binary
-go build -o secretlint cmd/secretlint/main.go
+# Verify it's installed and accessible from anywhere
+which secretlint
+secretlint --help
+
+# Test from different directory
+cd ~ && secretlint --help
 ```
 
 ### 2. Initialize in Your Project
 ```bash
-# Navigate to your Git repository
+# Navigate to any Git repository
 cd /path/to/your/project
 
-# Initialize secretlint (creates config files and pre-commit hook)
-/path/to/secretlint init
+# Initialize secretlint (works from anywhere now!)
+secretlint init
 ```
 
 ### 3. Test It Works
@@ -41,18 +44,59 @@ git commit -m "test commit"
 
 ### Installation & Setup
 
-#### Step 1: Build the Tool
-```bash
-# Ensure you have Go installed (1.19+)
-go version
+#### Step 1: Install the Tool Globally
 
+**Method 1: Go Install (Recommended - Easiest)**
+```bash
+# Install directly from GitHub (puts in $GOPATH/bin automatically)
+go install github.com/ZichenYuan/secretlint/cmd/secretlint@latest
+
+# Verify it's in your PATH
+which secretlint
+secretlint --help
+```
+
+**Method 2: Manual Build & Install**
+```bash
 # Clone and build
 git clone https://github.com/ZichenYuan/secretlint
 cd secretlint
 go build -o secretlint cmd/secretlint/main.go
 
-# Optional: Move to PATH for global access
+# Install globally to system PATH
 sudo mv secretlint /usr/local/bin/
+
+# Verify installation
+which secretlint
+secretlint --help
+```
+
+**Method 3: User Install (No sudo required)**
+```bash
+# Clone and build
+git clone https://github.com/ZichenYuan/secretlint
+cd secretlint
+go build -o secretlint cmd/secretlint/main.go
+
+# Install to user bin directory
+mkdir -p ~/bin
+mv secretlint ~/bin/
+
+# Add to PATH if not already (add to ~/.bashrc or ~/.zshrc)
+export PATH="$HOME/bin:$PATH"
+
+# Verify installation
+which secretlint
+secretlint --help
+```
+
+**Test Global Installation**
+```bash
+# Should work from any directory
+cd /tmp
+secretlint --help
+cd ~/Desktop
+secretlint init  # This should now work anywhere!
 ```
 
 #### Step 2: Initialize in Your Repository
@@ -220,13 +264,25 @@ Commit aborted.
 
 #### "secretlint binary not found" Error
 ```bash
-# Check if binary exists
+# First, check if secretlint is installed globally
 which secretlint
-ls -la ./secretlint
 
-# Rebuild and reinitialize
-go build -o secretlint cmd/secretlint/main.go
-./secretlint init
+# If not found, install globally:
+go install github.com/ZichenYuan/secretlint/cmd/secretlint@latest
+
+# Check your Go bin directory is in PATH
+go env GOPATH
+echo $PATH | grep "$(go env GOPATH)/bin"
+
+# If Go bin not in PATH, add it (add to ~/.bashrc or ~/.zshrc):
+export PATH="$(go env GOPATH)/bin:$PATH"
+
+# Reload your shell
+source ~/.bashrc  # or source ~/.zshrc
+
+# Verify installation
+which secretlint
+secretlint --help
 ```
 
 #### Pre-commit Hook Not Working
